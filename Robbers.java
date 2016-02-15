@@ -15,7 +15,7 @@ import java.awt.Image;
  */
 public class Robbers {
     public Robbers(int x , int y, Image image){
-        this.image = ResourceTools.loadImageFromResource("cops_and_robbers/Robber_Still.png");
+        this.image = ResourceTools.loadImageFromResource("cops_and_robbers/Robber.png");
         this.x = x;
         this.y = y;
     }

@@ -17,14 +17,17 @@ import java.util.ArrayList;
  *
  * @author WyattCampbell
  */
-class Bank_Heist extends Environment {
+class Heist extends Environment {
+//we need a more than one person game with the camera following the person and the gun follows the mouse.
 
     Bank bank;
     Robbers robbers;
+    private int bulletCount = 50;
+    private int mags = 5;
     private ArrayList<Shooting> shoot;
     private String direction;
 
-    public Bank_Heist() {
+    public Heist() {
 //        this.setBackground(ResourceTools.loadImageFromResource("cops_and_robbers/Bank.png"));
         robbers = new Robbers(0, 0, null);
         bank = new Bank(0, 0);
@@ -39,36 +42,46 @@ class Bank_Heist extends Environment {
     public void timerTaskHandler() {
         if (shoot != null) {
             for (Shooting shooting : shoot) {
-                shooting.move(50);
+                shooting.move(30);
             }
         }
     }
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             robbers.moveHorizontal(-10);
             direction = "Left";
             System.out.println(robbers.getX());
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_D) {
             robbers.moveHorizontal(10);
             direction = "Right";
             System.out.println(robbers.getX());
 
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            robbers.moveVertical(10);
-            System.out.println(robbers.getY());
-
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
+        if (e.getKeyCode() == KeyEvent.VK_W) {
             robbers.moveVertical(-10);
-            System.out.println(robbers.getY());
         }
+        if (e.getKeyCode() == KeyEvent.VK_S) {
+            robbers.moveVertical(10);
+        }
+//        shooting for now
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            System.out.println("shot");
-            shoot.add(new Shooting(robbers.getX(), robbers.getY()));
+            if (bulletCount > 0) {
+                System.out.println("shot");
+                shoot.add(new Shooting(robbers.getX() + robbers.getImage().getWidth(this), robbers.getY() + robbers.getImage().getHeight(this) / 2 + 5));
+                bulletCount = bulletCount - 1;
+            }
+        }
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            if (mags > 0) {
+                if (bulletCount < 50) {
+
+                    bulletCount = 50;
+                    mags = mags - 1;
+                }
+            }
         }
     }
 
@@ -79,7 +92,7 @@ class Bank_Heist extends Environment {
     @Override
     public void environmentMouseClicked(MouseEvent e) {
         if (true) {
-
+//            Want to shoot with the mouse
         }
     }
 
@@ -87,6 +100,7 @@ class Bank_Heist extends Environment {
     public void paintEnvironment(Graphics graphics) {
         if (bank != null) {
             bank.draw(graphics);
+            graphics.drawString("Bullets" + bulletCount + "/" + mags, 300, 300);
         }
         if (robbers != null) {
             robbers.draw(graphics);

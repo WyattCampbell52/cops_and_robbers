@@ -18,6 +18,6 @@ public class Cops_and_Robbers {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        ApplicationStarter.run("Bank Heist!", new Bank_Heist());//, Reso)
+        ApplicationStarter.run("Bank Heist!", new Heist());//, Reso)
     }
 }

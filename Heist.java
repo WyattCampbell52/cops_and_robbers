@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import path.TrigonometryCalculator;
 
 /**
  *
@@ -21,16 +22,14 @@ class Heist extends Environment {
 //we need a more than one person game with the camera following the person and the gun follows the mouse.
 
     Bank bank;
-    Robbers robbers;
-    private int bulletCount = 50;
-    private int mags = 5;
+    Robber robber;
     private ArrayList<Shooting> shoot;
     private String direction;
 
     public Heist() {
 //        this.setBackground(ResourceTools.loadImageFromResource("cops_and_robbers/Bank.png"));
-        robbers = new Robbers(0, 0, null);
-        bank = new Bank(0, 0);
+        robber = new Robber(0, 0, null);
+//        bank = new Bank(0, 0);
         shoot = new ArrayList<>();
     }
 
@@ -50,36 +49,34 @@ class Heist extends Environment {
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_A) {
-            robbers.moveHorizontal(-10);
+            robber.moveHorizontal(-10);
             direction = "Left";
-            System.out.println(robbers.getX());
+            System.out.println(robber.getX());
         }
         if (e.getKeyCode() == KeyEvent.VK_D) {
-            robbers.moveHorizontal(10);
+            robber.moveHorizontal(10);
             direction = "Right";
-            System.out.println(robbers.getX());
+            System.out.println(robber.getX());
 
         }
         if (e.getKeyCode() == KeyEvent.VK_W) {
-            robbers.moveVertical(-10);
+            robber.moveVertical(-10);
         }
         if (e.getKeyCode() == KeyEvent.VK_S) {
-            robbers.moveVertical(10);
+            robber.moveVertical(10);
         }
 //        shooting for now
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            if (bulletCount > 0) {
+            if (robber.bulletCount > 0) {
                 System.out.println("shot");
-                shoot.add(new Shooting(robbers.getX() + robbers.getImage().getWidth(this), robbers.getY() + robbers.getImage().getHeight(this) / 2 + 5));
-                bulletCount = bulletCount - 1;
+                shoot.add(new Shooting(robber.getX() + robber.getImage().getWidth(this), robber.getY() + robber.getImage().getHeight(this) / 2 + 5));
+                robber.bulletCount = robber.bulletCount - 1;
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_R) {
-            if (mags > 0) {
-                if (bulletCount < 50) {
-
-                    bulletCount = 50;
-                    mags = mags - 1;
+            if (robber.mags > 0) {
+                if (robber.bulletCount < 25) {
+                    robber.reload();;
                 }
             }
         }
@@ -93,17 +90,25 @@ class Heist extends Environment {
     public void environmentMouseClicked(MouseEvent e) {
         if (true) {
 //            Want to shoot with the mouse
+            System.out.println(e.getPoint());
+            
+            if (robber != null) {
+                //output an angle
+                System.out.println("Angle = " + TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + " radians");
+                robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()));
+            }
+            
         }
     }
 
     @Override
     public void paintEnvironment(Graphics graphics) {
-        if (bank != null) {
-            bank.draw(graphics);
-            graphics.drawString("Bullets" + bulletCount + "/" + mags, 300, 300);
-        }
-        if (robbers != null) {
-            robbers.draw(graphics);
+//        if (bank != null) {
+//            bank.draw(graphics);
+            graphics.drawString("Bullets" + robber.bulletCount + "/" + robber.mags, 300, 300);
+//        }
+        if (robber != null) {
+            robber.draw(graphics);
         }
         if (shoot != null) {
             for (Shooting shooting : shoot) {

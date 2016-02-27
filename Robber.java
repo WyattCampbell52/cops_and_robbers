@@ -23,7 +23,7 @@ import path.TrigonometryCalculator;
 public class Robber {
 
     public Robber(int x, int y, Image image) {
-        this.image = ResourceTools.loadImageFromResource("cops_and_robbers/Scars_Blue.png");
+        this.image = ResourceTools.loadImageFromResource("images/White_Guard_HairBlonde_Standing.png");
         this.x = x;
         this.y = y;
         shoot = new ArrayList<>();

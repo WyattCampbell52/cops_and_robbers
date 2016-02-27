@@ -22,9 +22,9 @@ import path.TrigonometryCalculator;
  * @author WyattCampbell
  */
 public class Shoot {
-
-    public Shoot(int x, int y, int angularVelocity, double angle) {
-        image = ResourceTools.loadImageFromResource("cops_and_robbers/Bullet.png");
+Robber robber;
+    public Shoot(int x, int y, double angularVelocity, double angle) {
+        image = ResourceTools.loadImageFromResource("images/Bullet.png");
         this.x = x;
         this.y = y;
         this.velocity = new Velocity(10, 10);
@@ -39,7 +39,7 @@ public class Shoot {
         AffineTransform olde = g2d.getTransform();
 
         AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angleRadians));
-        at.setToRotation(getAngleInRadians(), x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
+        at.setToRotation(angleRadians, x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
         g2d.setTransform(at);
         g2d.drawImage(image, x, y, null);
         
@@ -64,7 +64,7 @@ public class Shoot {
     private Velocity velocity;
     private int speed;
 
-    private int angularVelocity;
+    private double angularVelocity;
     private double angleRadians;
     private int rotationSpeed = 5;
 
@@ -153,14 +153,14 @@ public class Shoot {
     /**
      * @return the angularVelocity
      */
-    public int getAngularVelocity() {
+    public double getAngularVelocity() {
         return angularVelocity;
     }
 
     /**
      * @param angularVelocity the angularVelocity to set
      */
-    public void setAngularVelocity(int angularVelocity) {
+    public void setAngularVelocity(double angularVelocity) {
         this.angularVelocity = angularVelocity;
     }
 

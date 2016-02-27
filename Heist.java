@@ -35,7 +35,17 @@ class Heist extends Environment {
 //        this.setBackground(ResourceTools.loadImageFromResource("cops_and_robbers/Bank.png"));
         robber = new Robber(0, 0, null);
 //        bank = new Bank(0, 0);
-        bullet = new ArrayList<>();        
+        bullet = new ArrayList<>(); 
+        addMouseMotionListener(new MouseAdapter() {
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    mousePosition = e.getPoint();
+                    repaint();
+//                    System.out.println("Angle = " + TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + " radians");
+                    robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition));
+//                    shoot.setAngleRadians(TrigonometryCalculator.calculateAngle(shoot.centreOfMass(), mousePosition));
+                }
+        });
     }
 
     @Override
@@ -45,8 +55,8 @@ class Heist extends Environment {
     @Override
     public void timerTaskHandler() {
         if (bullet != null) {
-            for (Shoot bulleting : bullet) {
-                bulleting.move(30);
+            for (Shoot shoot : bullet) {
+                shoot.move();
             }
         }
     }
@@ -99,12 +109,10 @@ class Heist extends Environment {
     @Override
     public void environmentMouseClicked(MouseEvent e) {
 //            Want to bullet with the mouse
-        if (robber != null) {
             if (robber.bulletCount > 0) {
                 System.out.println("shot");
-                bullet.add(new Shoot(robber.getX() + robber.getImage().getWidth(this), robber.getY() + robber.getImage().getHeight(this) / 2 + 5));
+                bullet.add(new Shoot(robber.getX() + 20, robber.getY(), 0, robber.getAngleRadians()));
                 robber.bulletCount = robber.bulletCount - 1;
-            }
         }
         System.out.println(mousePosition);
     }
@@ -118,13 +126,13 @@ class Heist extends Environment {
         if (crossHairs != null) {
             crossHairs.draw(graphics);
         }
-        if (robber != null) {
-            robber.draw(graphics);
-            if (bullet != null) {
+        if (bullet != null) {
             for (Shoot bulleting : bullet) {
                 bulleting.draw(graphics);
             }
         }
+        if (robber != null) {
+            robber.draw(graphics);
         }
     }
 }

@@ -24,15 +24,15 @@ class Heist extends Environment {
 //we need a more than one person game with the camera following the person and the gun follows the mouse.
 
     Bank bank;
-    Shoot shoot;
+    Projectile shoot;
     Robber robber;
     CrossHairs crossHairs;
-    private ArrayList<Shoot> bullet;
+    private ArrayList<Projectile> bullet;
     private String direction;
     private Point mousePosition;
 
     public Heist() {
-        this.setBackground(ResourceTools.loadImageFromResource("images/Bank_Heist.png"));
+        bank = new Bank();
         robber = new Robber(0, 0, null);
 //        bank = new Bank(0, 0);
         bullet = new ArrayList<>();
@@ -54,8 +54,8 @@ class Heist extends Environment {
     @Override
     public void timerTaskHandler() {
         if (bullet != null) {
-            for (Shoot shoot : bullet) {
-                shoot.move();
+            for (Projectile projectile : bullet) {
+                projectile.move();
             }
         }
     }
@@ -110,22 +110,23 @@ class Heist extends Environment {
 //            Want to bullet with the mouse
         if (robber.bulletCount > 0) {
             System.out.println("shot");
-            bullet.add(new Shoot(robber.centreOfMass().x + 20, robber.centreOfMass().y, TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition), -TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + 90));
+//            bullet.add(new Projectile(robber.centreOfMass().x + 20, robber.centreOfMass().y, TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition), -TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + 90));
+            bullet.add(new Projectile(robber.centreOfMass(), TrigonometryCalculator.calculateVelocity(robber.centreOfMass(), mousePosition, 5)));
             robber.bulletCount = robber.bulletCount - 1;
         }
     }
 
     @Override
     public void paintEnvironment(Graphics graphics) {
-//        if (bank != null) {
-//            bank.draw(graphics);
+        if (bank != null) {
+            bank.draw(graphics);
         graphics.drawString("Bullets" + robber.bulletCount + "/" + robber.mags, 300, 300);
-//        }
+        }
         if (crossHairs != null) {
             crossHairs.draw(graphics);
         }
         if (bullet != null) {
-            for (Shoot bulleting : bullet) {
+            for (Projectile bulleting : bullet) {
                 bulleting.draw(graphics);
             }
         }

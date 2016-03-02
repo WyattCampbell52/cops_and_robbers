@@ -58,7 +58,7 @@ public class Robber {
 
     //<editor-fold defaultstate="collapsed" desc="Properites">
     MouseEvent e;
-    private ArrayList<Shoot> shoot;
+    private ArrayList<Projectile> shoot;
     private double angleRadians;
     public int bulletCount = 25;
     public int mags = 5;

@@ -21,28 +21,27 @@ import path.TrigonometryCalculator;
  *
  * @author WyattCampbell
  */
-public class Shoot {
-Robber robber;
-    public Shoot(int x, int y, double angularVelocity, double angle) {
-        image = ResourceTools.loadImageFromResource("images/Bullet.png");
-        this.x = x;
-        this.y = y;
-        this.velocity = new Velocity(10, 10);
-        this.angularVelocity = angularVelocity;
-        this.angleRadians = angle;
+public class Projectile {
 
+//    public Projectile(int x, int y, Velocity velocity) {
+    public Projectile(Point location, Velocity velocity) {
+        image = ResourceTools.loadImageFromResource("images/Bullet.png");
+        System.out.println(velocity.toString());
+        this.x = location.x;
+        this.y = location.y;
+        this.velocity = velocity;
         this.startTime = System.currentTimeMillis();
     }
 
     public void draw(Graphics graphics) {
-        Graphics2D g2d = (Graphics2D) graphics;
-        AffineTransform olde = g2d.getTransform();
-
-        AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angleRadians));
-        at.setToRotation(angleRadians, x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
-        g2d.setTransform(at);
-        g2d.drawImage(image, x, y, null);
-        
+//        Graphics2D g2d = (Graphics2D) graphics;
+//        AffineTransform olde = g2d.getTransform();
+//
+//        AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angleRadians));
+//        at.setToRotation(angleRadians, x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
+//        g2d.setTransform(at);
+//        g2d.drawImage(image, x, y, null);
+//        
         graphics.setColor(Color.red);
         graphics.drawRect(x, y, image.getWidth(null), image.getHeight(null));
 
@@ -64,20 +63,16 @@ Robber robber;
     private Velocity velocity;
     private int speed;
 
-    private double angularVelocity;
-    private double angleRadians;
-    private int rotationSpeed = 5;
-
     private Image image;
 
     private long startTime;
     private long maxDurationMillis = 2000;
     private boolean alive = true;
 
-    public Point centreOfMass(){
-        return new Point(x + (image.getWidth(null)/2), y + (image.getHeight(null)/2));
+    public Point centreOfMass() {
+        return new Point(x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
     }
-    
+
     /**
      * @return the x
      */
@@ -121,22 +116,6 @@ Robber robber;
     }
 
     /**
-     * @return the speed
-     */
-    public int getSpeed() {
-        return speed;
-    }
-
-    /**
-     * @param speed the speed to set
-     */
-    public void setSpeed(int speed) {
-        this.speed = speed;
-
-        velocity = TrigonometryCalculator.getVelocity(Math.toRadians((angleRadians) % 360), speed);
-    }
-
-    /**
      * @return the image
      */
     public Image getImage() {
@@ -150,52 +129,9 @@ Robber robber;
         this.image = image;
     }
 
-    /**
-     * @return the angularVelocity
-     */
-    public double getAngularVelocity() {
-        return angularVelocity;
-    }
-
-    /**
-     * @param angularVelocity the angularVelocity to set
-     */
-    public void setAngularVelocity(double angularVelocity) {
-        this.angularVelocity = angularVelocity;
-    }
-
-    /**
-     * @return the angle
-     */
-    public double getAngle() {
-        return angleRadians;
-    }
-
-    /**
-     * @return the angle in radians
-     */
-    public double getAngleInRadians() {
-        return Math.toRadians(angleRadians);
-    }
-
-    /**
-     * @param angle the angle to set
-     */
-    public void setAngleRadians(double angleRadiansRadians) {
-        this.angleRadians = angleRadiansRadians;
-    }
-
-    void rotate(int rotationSpeed) {
-        angleRadians = (angleRadians + rotationSpeed) % 360;
-    }
-
-    void accelerate(int velocityChange) {
-        setSpeed(speed + 10);
-    }
-
     void move() {
-        x -= velocity.x;
-        y -= velocity.y;
+        x += velocity.x;
+        y += velocity.y;
 
         checkLifeTime();
     }
@@ -280,21 +216,6 @@ Robber robber;
     }
 
     /**
-     * @return the rotationSpeed
-     */
-    public int getRotationSpeed() {
-        return rotationSpeed;
-    }
-
-    /**
-     * @param rotationSpeed the rotationSpeed to set
-     */
-    public void setRotationSpeed(int rotationSpeed) {
-        this.rotationSpeed = rotationSpeed;
-    }
-    //</editor-fold>
-
-    /**
      * @param startTime the startTime to set
      */
     public void setStartTime(long startTime) {
@@ -314,6 +235,7 @@ Robber robber;
     public void setAlive(boolean alive) {
         this.alive = alive;
     }
+    //</editor-fold>
 
 }
 

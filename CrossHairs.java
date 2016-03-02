@@ -17,11 +17,14 @@ import java.awt.Point;
 public class CrossHairs {
     public CrossHairs(Point point){
         this.point = point;
-        image = ResourceTools.loadImageFromResource("cops_and_robbers/Cross_Hairs.png");
+        image = ResourceTools.loadImageFromResource("images/Cross_Hairs.png");
     }
     private Point point;
     private Image image;
     public void draw(Graphics graphics) {
         graphics.drawImage(image, point.x - 25, point.y - 25, null);
+    }
+    public Point centreOfMass(){
+        return new Point(point.x-25 + (image.getWidth(null)/2), point.y - 25 + (image.getHeight(null)/2));
     }
 }

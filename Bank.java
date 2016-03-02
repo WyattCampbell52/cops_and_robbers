@@ -8,6 +8,7 @@ package cops_and_robbers;
 import images.ResourceTools;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 /**
@@ -15,15 +16,16 @@ import java.awt.event.KeyEvent;
  * @author WyattCampbell
  */
 public class Bank {
-    public Bank(int x, int y) {
-        this.image = ResourceTools.loadImageFromResource("cops_and_robbers/Bank.png");
-        this.x = x;
-        this.y = y;
+    public Bank() {
+        this.image = ResourceTools.loadImageFromResource("images/Bank_Heist_Preview.png");
+        this.x = 0;
+        this.y = 0;
         
     }
 
     public void draw(Graphics graphics) {
         graphics.drawImage(image, x, y, null);
+        graphics.drawRect(20,20,1309,700);
     }
     private Image image;
     private int x;
@@ -67,5 +69,8 @@ public class Bank {
     }
     public void moveRight(){
         x = x + 1;
+    }
+    public void mapBorder(){
+        new Rectangle(0, 0,1239,900);
     }
 }

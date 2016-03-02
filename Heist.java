@@ -5,6 +5,10 @@
  */
 package cops_and_robbers;
 
+import audio.Playlist;
+import audio.SoundManager;
+import audio.Source;
+import audio.Track;
 import environment.Environment;
 import images.ResourceTools;
 import java.awt.Graphics;
@@ -42,9 +46,25 @@ class Heist extends Environment {
                 mousePosition = e.getPoint();
                 repaint();
 //                    System.out.println("Angle = " + TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + " radians");
-                robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition));
+                robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition) + .75);
             }
         });
+        
+    }
+    SoundManager soundManager;
+    public static final String RELOAD = "Relaod";
+    public static final String EMPTYCLIP = "Empty Clip";
+
+    private void setUpSound() {
+//        set up list of trackes in a playlist
+        ArrayList<Track> tracks = new ArrayList<>();
+        tracks.add(new Track(RELOAD, Source.FILE, "/sounds/Reload.wav"));
+        tracks.add(new Track(EMPTYCLIP, Source.FILE, "/sounds/Empty_Gun.wav"));
+
+//        Playlist
+        Playlist playlist = new Playlist(tracks);
+//        pass the playlist to a sound manager
+        soundManager = new SoundManager(playlist);
     }
 
     @Override
@@ -87,7 +107,6 @@ class Heist extends Environment {
                     mousePosition = e.getPoint();
                     repaint();
 //                    System.out.println("Angle = " + TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + " radians");
-                    robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition));
                     crossHairs = new CrossHairs(mousePosition);
                 }
             });
@@ -95,7 +114,8 @@ class Heist extends Environment {
         if (e.getKeyCode() == KeyEvent.VK_R) {
             if (robber.mags > 0) {
                 if (robber.bulletCount < 25) {
-                    robber.reload();;
+//                    soundManager.play(RELOAD, 1);
+                    robber.reload();
                 }
             }
         }
@@ -110,9 +130,10 @@ class Heist extends Environment {
 //            Want to bullet with the mouse
         if (robber.bulletCount > 0) {
             System.out.println("shot");
-//            bullet.add(new Projectile(robber.centreOfMass().x + 20, robber.centreOfMass().y, TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition), -TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + 90));
-            bullet.add(new Projectile(robber.centreOfMass(), TrigonometryCalculator.calculateVelocity(robber.centreOfMass(), mousePosition, 5)));
+            bullet.add(new Projectile(robber.centreOfMass(), TrigonometryCalculator.calculateVelocity(robber.centreOfMass(), mousePosition, 20), -robber.getAngleRadians()));
             robber.bulletCount = robber.bulletCount - 1;
+        }else if (robber.bulletCount == 0) {
+//            soundManager.play(EMPTYCLIP, 1);
         }
     }
 

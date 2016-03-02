@@ -10,6 +10,7 @@ import audio.SoundManager;
 import audio.Source;
 import audio.Track;
 import environment.Environment;
+import environment.Velocity;
 import images.ResourceTools;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -37,7 +38,7 @@ class Heist extends Environment {
 
     public Heist() {
         bank = new Bank();
-        robber = new Robber(0, 0, null);
+        robber = new Robber(0, 0, 0.0);
 //        bank = new Bank(0, 0);
         bullet = new ArrayList<>();
         addMouseMotionListener(new MouseAdapter() {
@@ -49,7 +50,7 @@ class Heist extends Environment {
                 robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition) + .75);
             }
         });
-        
+
     }
     SoundManager soundManager;
     public static final String RELOAD = "Relaod";
@@ -78,26 +79,33 @@ class Heist extends Environment {
                 projectile.move();
             }
         }
+        if (robber != null) {
+//            robber.move(robber.getX(), robber.getY());
+            robber.move();
+        }
     }
+
+    int robberSpeed = 2;
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_A) {
-            robber.moveHorizontal(-10);
+//            robber.move(-1,0);
+            robber.setVelocity(new Velocity(-robberSpeed, 0));
             direction = "Left";
             System.out.println(robber.getX());
-        }
-        if (e.getKeyCode() == KeyEvent.VK_D) {
-            robber.moveHorizontal(10);
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+//            robber.move(1,0);
+            robber.setVelocity(new Velocity(robberSpeed, 0));
             direction = "Right";
             System.out.println(robber.getX());
 
-        }
-        if (e.getKeyCode() == KeyEvent.VK_W) {
-            robber.moveVertical(-10);
-        }
-        if (e.getKeyCode() == KeyEvent.VK_S) {
-            robber.moveVertical(10);
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
+//            robber.move(0,-1);
+            robber.setVelocity(new Velocity(0, -robberSpeed));
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+//            robber.move(0,1);
+            robber.setVelocity(new Velocity(0, robberSpeed));
         }
 //        bulleting for now
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -112,7 +120,7 @@ class Heist extends Environment {
             });
         }
         if (e.getKeyCode() == KeyEvent.VK_R) {
-            if (robber.mags > 0) {
+            if (robber.magCount > 0) {
                 if (robber.bulletCount < 25) {
 //                    soundManager.play(RELOAD, 1);
                     robber.reload();
@@ -123,6 +131,13 @@ class Heist extends Environment {
 
     @Override
     public void keyReleasedHandler(KeyEvent e) {
+        if ((e.getKeyCode() == KeyEvent.VK_A) || 
+            (e.getKeyCode() == KeyEvent.VK_D) ||
+            (e.getKeyCode() == KeyEvent.VK_W) ||
+            (e.getKeyCode() == KeyEvent.VK_S)){
+            robber.stop();
+//            robber.setVelocity(new Velocity(0, 0));
+        }
     }
 
     @Override
@@ -132,7 +147,7 @@ class Heist extends Environment {
             System.out.println("shot");
             bullet.add(new Projectile(robber.centreOfMass(), TrigonometryCalculator.calculateVelocity(robber.centreOfMass(), mousePosition, 20), -robber.getAngleRadians()));
             robber.bulletCount = robber.bulletCount - 1;
-        }else if (robber.bulletCount == 0) {
+        } else if (robber.bulletCount == 0) {
 //            soundManager.play(EMPTYCLIP, 1);
         }
     }
@@ -141,7 +156,7 @@ class Heist extends Environment {
     public void paintEnvironment(Graphics graphics) {
         if (bank != null) {
             bank.draw(graphics);
-        graphics.drawString("Bullets" + robber.bulletCount + "/" + robber.mags, 300, 300);
+            graphics.drawString("Bullets" + robber.bulletCount + "/" + robber.magCount, 300, 300);
         }
         if (crossHairs != null) {
             crossHairs.draw(graphics);

@@ -5,6 +5,7 @@
  */
 package cops_and_robbers;
 
+import environment.Velocity;
 import images.ResourceTools;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,47 +23,78 @@ import path.TrigonometryCalculator;
  */
 public class Robber {
 
-    public Robber(int x, int y, Image image) {
-        this.image = ResourceTools.loadImageFromResource("images/White_Guard_HairBlonde_Standing.png");
-        this.x = x;
-        this.y = y;
-        shoot = new ArrayList<>();
-        this.angleRadians = 0;
+//<editor-fold defaultstate="collapsed" desc="Constructors">
+    {
+        x = 0;
+        y = 0;
+        
+        velocity = new Velocity(0, 0);
+        angleRadians = 0;
+
+        image = ResourceTools.loadImageFromResource("images/White_Guard_HairBlonde_Standing.png");
+        
+        bulletCount = DEFAULT_BULLET_COUNT;
+        magCount = 5;
     }
     
+    public Robber(int x, int y, double angleRadians) {
+        this.x = x;
+    }
+//</editor-fold>
     
-
-    
+//<editor-fold defaultstate="collapsed" desc="Drawing">
     public void draw(Graphics graphics) {
         Graphics2D g2d = (Graphics2D) graphics;
         AffineTransform olde = g2d.getTransform();
-
+        
         AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angleRadians));
         at.setToRotation(getAngleRadians() -90, x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
         g2d.setTransform(at);
         g2d.drawImage(getImage(), x, y, null);
         graphics.drawRect(x, y, image.getWidth(null), image.getHeight(null));
-
+        
         g2d.setTransform(olde);
         g2d.dispose();
     }
+//</editor-fold>
     
+//<editor-fold defaultstate="collapsed" desc="Movement Methods">
+    void move() {
+        x += getVelocity().x;
+        y += getVelocity().y;
+    }
     
-    public void moveHorizontal(int x) {
-        setX(this.x + x);
+    void stop() {
+        velocity.x = 0;
+        velocity.y = 0;
     }
-
-    public void moveVertical(int y) {
-        setY(this.y + y);
+//</editor-fold>
+        
+//<editor-fold defaultstate="collapsed" desc="Other Methods">
+    public boolean reload(){
+        if (magCount > 0) {
+            magCount--;
+            bulletCount = DEFAULT_BULLET_COUNT;
+            return true;
+        }
+        return false;
     }
-
-    //<editor-fold defaultstate="collapsed" desc="Properites">
-    MouseEvent e;
-    private ArrayList<Projectile> shoot;
+    
+    public void shoot(){
+        
+    }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="Properites">
+    public static final int DEFAULT_BULLET_COUNT = 25;
+    public static final int MAX_BULLET_COUNT = 50;
+    public static final int MIN_BULLET_COUNT = 0;
+    
     private double angleRadians;
-    public int bulletCount = 25;
-    public int mags = 5;
+    public int bulletCount;
+    public int magCount;
     private Image image;
+    private Velocity velocity;
     private int x;
     private int y;
 
@@ -111,15 +143,9 @@ public class Robber {
     public void setY(int y) {
         this.y = y;
     }
-    public Rectangle rectangle(){
+    
+    public Rectangle hitBox(){
         return new Rectangle(x, y, image.getWidth(null), image.getHeight(null)/8);
-    }
-    public void reload(){
-        bulletCount = 25;
-        mags = mags - 1;
-    }
-    public void shoot(){
-        
     }
 
     /**
@@ -135,5 +161,21 @@ public class Robber {
     public void setAngleRadians(double angleRadiansRadians) {
         this.angleRadians = angleRadiansRadians;
     }
+
+    /**
+     * @return the velocity
+     */
+    public Velocity getVelocity() {
+        return velocity;
+    }
+
+    /**
+     * @param velocity the velocity to set
+     */
+    public void setVelocity(Velocity velocity) {
+        this.velocity = velocity;
+    }
+
+
 }
 //</editor-fold>

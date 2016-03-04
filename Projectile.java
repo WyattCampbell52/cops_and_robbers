@@ -24,24 +24,25 @@ import path.TrigonometryCalculator;
 public class Projectile {
 
 //    public Projectile(int x, int y, Velocity velocity) {
-    public Projectile(Point location, Velocity velocity) {
+    public Projectile(Point location, Velocity velocity, double angleRadians) {
         image = ResourceTools.loadImageFromResource("images/Bullet.png");
         System.out.println(velocity.toString());
         this.x = location.x;
         this.y = location.y;
         this.velocity = velocity;
         this.startTime = System.currentTimeMillis();
+        this.angleRadians = angleRadians;
     }
 
     public void draw(Graphics graphics) {
-//        Graphics2D g2d = (Graphics2D) graphics;
-//        AffineTransform olde = g2d.getTransform();
+        Graphics2D g2d = (Graphics2D) graphics;
+        AffineTransform olde = g2d.getTransform();
 //
-//        AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angleRadians));
-//        at.setToRotation(angleRadians, x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
-//        g2d.setTransform(at);
-//        g2d.drawImage(image, x, y, null);
-//        
+        AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(getAngleRadians()));
+        at.setToRotation(getAngleRadians(), x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
+        g2d.setTransform(at);
+        g2d.drawImage(image, x, y, null);
+
         graphics.setColor(Color.red);
         graphics.drawRect(x, y, image.getWidth(null), image.getHeight(null));
 
@@ -62,6 +63,7 @@ public class Projectile {
 
     private Velocity velocity;
     private int speed;
+    private double angleRadians;
 
     private Image image;
 
@@ -236,6 +238,20 @@ public class Projectile {
         this.alive = alive;
     }
     //</editor-fold>
+
+    /**
+     * @return the angleRadians
+     */
+    public double getAngleRadians() {
+        return angleRadians;
+    }
+
+    /**
+     * @param angleRadians the angleRadians to set
+     */
+    public void setAngleRadians(double angleRadians) {
+        this.angleRadians = angleRadians;
+    }
 
 }
 

@@ -15,6 +15,7 @@ import images.ResourceTools;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -32,35 +33,42 @@ class Heist extends Environment {
     Projectile shoot;
     Robber robber;
     CrossHairs crossHairs;
+    CheckIntercetion checkIntercetion;
     private ArrayList<Projectile> bullet;
+    private ArrayList<Cop> cops;
     private String direction;
     private Point mousePosition;
+    int robberSpeed = 2;
 
     public Heist() {
         bank = new Bank();
         robber = new Robber(0, 0, 0.0);
-//        bank = new Bank(0, 0);
         bullet = new ArrayList<>();
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 mousePosition = e.getPoint();
                 repaint();
-//                    System.out.println("Angle = " + TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + " radians");
                 robber.setAngleRadians(TrigonometryCalculator.calculateAngle(robber.centreOfMass(), mousePosition) + .75);
             }
         });
-
+        setUpSound();
+        cops = new ArrayList<>();
+        cops.add(new Cop(100, 200, PROPERTIES));
     }
     SoundManager soundManager;
     public static final String RELOAD = "Relaod";
     public static final String EMPTYCLIP = "Empty Clip";
+    public static final String SILENCESHOT = "Silence Shot";
+    public static final String BULLETDROP = "Bullet Drop";
 
     private void setUpSound() {
 //        set up list of trackes in a playlist
         ArrayList<Track> tracks = new ArrayList<>();
-        tracks.add(new Track(RELOAD, Source.FILE, "/sounds/Reload.wav"));
-        tracks.add(new Track(EMPTYCLIP, Source.FILE, "/sounds/Empty_Gun.wav"));
+        tracks.add(new Track(RELOAD, Source.FILE, "/sounds/Gun_reload.wav"));
+        tracks.add(new Track(EMPTYCLIP, Source.FILE, "/sounds/Gun_empty.wav"));
+        tracks.add(new Track(SILENCESHOT, Source.FILE, "/sounds/Silence_Shot.wav"));
+        tracks.add(new Track(BULLETDROP, Source.FILE, "/sounds/Empty_bullet_drop.wav"));
 
 //        Playlist
         Playlist playlist = new Playlist(tracks);
@@ -80,12 +88,9 @@ class Heist extends Environment {
             }
         }
         if (robber != null) {
-//            robber.move(robber.getX(), robber.getY());
             robber.move();
         }
     }
-
-    int robberSpeed = 2;
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
@@ -108,33 +113,38 @@ class Heist extends Environment {
             robber.setVelocity(new Velocity(0, robberSpeed));
         }
 //        bulleting for now
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (e.getKeyCode() == KeyEvent.VK_G || robber.mode == "Engaging") {
             addMouseMotionListener(new MouseAdapter() {
+//                robber.setImage();
                 @Override
                 public void mouseMoved(MouseEvent e) {
                     mousePosition = e.getPoint();
                     repaint();
 //                    System.out.println("Angle = " + TrigonometryCalculator.calculateAngle(robber.centreOfMass(), e.getPoint()) + " radians");
                     crossHairs = new CrossHairs(mousePosition);
+                    robber.mode = "Suspicious";
                 }
             });
         }
+        
+        if (robber.mode == "Engaging" || robber.mode == "Suspicious") {
         if (e.getKeyCode() == KeyEvent.VK_R) {
             if (robber.magCount > 0) {
                 if (robber.bulletCount < 25) {
-//                    soundManager.play(RELOAD, 1);
+                    soundManager.play(RELOAD, 1);
                     robber.reload();
                 }
             }
         }
     }
+    }
 
     @Override
     public void keyReleasedHandler(KeyEvent e) {
-        if ((e.getKeyCode() == KeyEvent.VK_A) || 
-            (e.getKeyCode() == KeyEvent.VK_D) ||
-            (e.getKeyCode() == KeyEvent.VK_W) ||
-            (e.getKeyCode() == KeyEvent.VK_S)){
+        if ((e.getKeyCode() == KeyEvent.VK_A)
+                || (e.getKeyCode() == KeyEvent.VK_D)
+                || (e.getKeyCode() == KeyEvent.VK_W)
+                || (e.getKeyCode() == KeyEvent.VK_S)) {
             robber.stop();
 //            robber.setVelocity(new Velocity(0, 0));
         }
@@ -142,13 +152,15 @@ class Heist extends Environment {
 
     @Override
     public void environmentMouseClicked(MouseEvent e) {
-//            Want to bullet with the mouse
-        if (robber.bulletCount > 0) {
+        if (robber.bulletCount > 0 && robber.mode == "Suspicious") {
             System.out.println("shot");
-            bullet.add(new Projectile(robber.centreOfMass(), TrigonometryCalculator.calculateVelocity(robber.centreOfMass(), mousePosition, 20), -robber.getAngleRadians()));
+            bullet.add(new Projectile(robber.centreOfMass(), TrigonometryCalculator.calculateVelocity(robber.centreOfMass(), mousePosition, 50), -robber.getAngleRadians()));
             robber.bulletCount = robber.bulletCount - 1;
+            soundManager.play(SILENCESHOT, 1);
+                soundManager.play(BULLETDROP, 1);
+            
         } else if (robber.bulletCount == 0) {
-//            soundManager.play(EMPTYCLIP, 1);
+            soundManager.play(EMPTYCLIP, 1);
         }
     }
 
@@ -164,6 +176,11 @@ class Heist extends Environment {
         if (bullet != null) {
             for (Projectile bulleting : bullet) {
                 bulleting.draw(graphics);
+            }
+        }
+        if (cops != null) {
+            for (Cop cops : cops) {
+                cops.draw(graphics);
             }
         }
         if (robber != null) {

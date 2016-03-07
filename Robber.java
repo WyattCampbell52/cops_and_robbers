@@ -31,11 +31,12 @@ public class Robber {
         velocity = new Velocity(0, 0);
         angleRadians = 0;
 
-        image = ResourceTools.loadImageFromResource("images/White_Guard_HairBlonde_Standing.png");
+        setImage(ResourceTools.loadImageFromResource("images/Wolf_Unmasked.png"));
         
-        bulletCount = DEFAULT_BULLET_COUNT;
+        bulletCount = SIDEARM_BULLET_COUNT;
         magCount = 5;
-    }
+        mode = "Concealed";
+}
     
     public Robber(int x, int y, double angleRadians) {
         this.x = x;
@@ -48,10 +49,10 @@ public class Robber {
         AffineTransform olde = g2d.getTransform();
         
         AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angleRadians));
-        at.setToRotation(getAngleRadians() -90, x + (image.getWidth(null) / 2), y + (image.getHeight(null) / 2));
+        at.setToRotation(getAngleRadians() -90, x + (getImage().getWidth(null) / 2), y + (getImage().getHeight(null) / 2));
         g2d.setTransform(at);
         g2d.drawImage(getImage(), x, y, null);
-        graphics.drawRect(x, y, image.getWidth(null), image.getHeight(null));
+        graphics.drawRect(x, y, getImage().getWidth(null), getImage().getHeight(null));
         
         g2d.setTransform(olde);
         g2d.dispose();
@@ -74,32 +75,39 @@ public class Robber {
     public boolean reload(){
         if (magCount > 0) {
             magCount--;
-            bulletCount = DEFAULT_BULLET_COUNT;
+            bulletCount = SIDEARM_BULLET_COUNT;
             return true;
         }
         return false;
     }
     
-    public void shoot(){
-        
+    public void danger(String string){
+        if (string == "visible") {
+            setSuspiciousMeter(getSuspiciousMeter() + 1);
+        } else if (getSuspiciousMeter() > 0) {
+            setSuspiciousMeter(getSuspiciousMeter() - 1);
+        }
     }
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="Properites">
-    public static final int DEFAULT_BULLET_COUNT = 25;
-    public static final int MAX_BULLET_COUNT = 50;
-    public static final int MIN_BULLET_COUNT = 0;
+    public static final int SIDEARM_BULLET_COUNT = 9;
+    public static final int PRIMARY_BULLET_COUNT = 25;
+    public static final int MELEE_BULLET_COUNT = 10000;
     
     private double angleRadians;
+    private int suspiciousMeter;
     public int bulletCount;
     public int magCount;
     private Image image;
     private Velocity velocity;
     private int x;
     private int y;
+    private int health;
+    public String mode;
 
     public Point centreOfMass(){
-        return new Point(x + (image.getWidth(null)/2), y + (image.getHeight(null)/2));
+        return new Point(x + (getImage().getWidth(null)/2), y + (getImage().getHeight(null)/2));
     }
     
     /**
@@ -145,7 +153,7 @@ public class Robber {
     }
     
     public Rectangle hitBox(){
-        return new Rectangle(x, y, image.getWidth(null), image.getHeight(null)/8);
+        return new Rectangle(x, y, getImage().getWidth(null), getImage().getHeight(null)/8);
     }
 
     /**
@@ -174,6 +182,34 @@ public class Robber {
      */
     public void setVelocity(Velocity velocity) {
         this.velocity = velocity;
+    }
+
+    /**
+     * @return the suspiciousMeter
+     */
+    public int getSuspiciousMeter() {
+        return suspiciousMeter;
+    }
+
+    /**
+     * @param suspiciousMeter the suspiciousMeter to set
+     */
+    public void setSuspiciousMeter(int suspiciousMeter) {
+        this.suspiciousMeter = suspiciousMeter;
+    }
+
+    /**
+     * @return the health
+     */
+    public int getHealth() {
+        return health;
+    }
+
+    /**
+     * @param health the health to set
+     */
+    public void setHealth(int health) {
+        this.health = health;
     }
 
 

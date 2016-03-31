@@ -48,7 +48,7 @@ public class Projectile {
 
     }
 
-    public Rectangle rectangle() {
+    public Rectangle hitBox() {
         return new Rectangle(x, y, image.getWidth(null), image.getHeight(null));
     }
 

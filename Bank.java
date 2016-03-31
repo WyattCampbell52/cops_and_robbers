@@ -17,9 +17,9 @@ import java.awt.event.KeyEvent;
  */
 public class Bank {
     public Bank() {
-        this.image = ResourceTools.loadImageFromResource("images/Bank_Heist_Preview.png");
-        this.x = 0;
-        this.y = 0;
+        this.image = ResourceTools.loadImageFromResource("images/Bank_Heist.png");
+        this.x = -1000;
+        this.y = -1000;
         
     }
 
